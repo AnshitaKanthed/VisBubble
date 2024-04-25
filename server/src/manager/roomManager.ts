@@ -24,20 +24,35 @@ export class RoomManager {
         user1.socket.emit("send-offer", {
             roomId
         })
-    }
 
-    onOffer(roomId: string, sdp: string) {
-        const user2 = this.rooms.get(roomId)?.user2;
-        user2?.socket.emit("offer", {
-            sdp
+        user2.socket.emit("send-offer", {
+            roomId
         })
     }
 
-    onAnswer(roomId: string, sdp: string) {
-        const user1 = this.rooms.get(roomId)?.user1;
-        user1?.socket.emit("offer", {
-            sdp
+    onOffer(roomId: string, sdp: string, senderSocketid: string) {
+        const room = this.rooms.get(roomId);
+        if (!room) {
+            return;
+        }
+        const receivingUser = room.user1.socket.id === senderSocketid ? room.user2: room.user1;
+        receivingUser?.socket.emit("offer", {
+            sdp,
+            roomId
         })
+    }
+
+    onAnswer(roomId: string, sdp: string, senderSocketid: string) {
+        const room = this.rooms.get(roomId);
+        if (!room) {
+            return;
+        }
+        const receivingUser = room.user1.socket.id === senderSocketid ? room.user2: room.user1;
+
+        receivingUser?.socket.emit("answer", {
+            sdp,
+            roomId
+        });
     }
 
     generate() {
