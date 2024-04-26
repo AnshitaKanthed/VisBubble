@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 
+
 const URL = "https://liberal-shantee-anshitakanthed.koyeb.app";
+
 
 export const Room = ({
     name,
@@ -20,8 +22,8 @@ export const Room = ({
     const [, setRemoteVideoTrack] = useState<MediaStreamTrack | null>(null);
     const [, setRemoteAudioTrack] = useState<MediaStreamTrack | null>(null);
     const [, setRemoteMediaStream] = useState<MediaStream | null>(null);
-    const remoteVideoRef = useRef<HTMLVideoElement>();
-    const localVideoRef = useRef<HTMLVideoElement>();
+    const remoteVideoRef = useRef<HTMLVideoElement | null>(null);
+    const localVideoRef = useRef<HTMLVideoElement | null>(null);
 
     useEffect(() => {
         const socket = io(URL);
@@ -80,7 +82,7 @@ export const Room = ({
 
             setRemoteMediaStream(stream);
             setReceivingPc(pc);
-            window.pcr = pc;
+            // window.pcr = pc;
             pc.ontrack = () => {
                 alert("ontrack");
             }
