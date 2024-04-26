@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 
-const URL = "http://localhost:3000";
+const URL = "https://liberal-shantee-anshitakanthed.koyeb.app";
 
 export const Room = ({
     name,
