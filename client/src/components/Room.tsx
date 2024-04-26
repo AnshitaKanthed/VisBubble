@@ -14,7 +14,6 @@ export const Room = ({
     localAudioTrack: MediaStreamTrack | null,
     localVideoTrack: MediaStreamTrack | null,
 }) => {
-    // const [searchParams, setSearchParams] = useSearchParams();
     const [lobby, setLobby] = useState(true);
     const [, setSocket] = useState<null | Socket>(null);
     const [, setSendingPc] = useState<null | RTCPeerConnection>(null);
@@ -27,7 +26,7 @@ export const Room = ({
 
     useEffect(() => {
         const socket = io(URL);
-        socket.on('send-offer', async ({roomId}) => {
+        socket.on('send-offer', async ({ roomId }) => {
             console.log("sending offer");
             setLobby(false);
             const pc = new RTCPeerConnection();
@@ -47,11 +46,11 @@ export const Room = ({
             pc.onicecandidate = async (e) => {
                 console.log("receiving ice candidate locally");
                 if (e.candidate) {
-                   socket.emit("add-ice-candidate", {
-                    candidate: e.candidate,
-                    type: "sender",
-                    roomId
-                   })
+                    socket.emit("add-ice-candidate", {
+                        candidate: e.candidate,
+                        type: "sender",
+                        roomId
+                    })
                 }
             }
 
@@ -67,7 +66,7 @@ export const Room = ({
             }
         });
 
-        socket.on("offer", async ({roomId, sdp: remoteSdp}) => {
+        socket.on("offer", async ({ roomId, sdp: remoteSdp }) => {
             console.log("received offer");
             setLobby(false);
             const pc = new RTCPeerConnection();
@@ -93,11 +92,11 @@ export const Room = ({
                 }
                 console.log("omn ice candidate on receiving seide");
                 if (e.candidate) {
-                   socket.emit("add-ice-candidate", {
-                    candidate: e.candidate,
-                    type: "receiver",
-                    roomId
-                   })
+                    socket.emit("add-ice-candidate", {
+                        candidate: e.candidate,
+                        type: "receiver",
+                        roomId
+                    })
                 }
             }
 
@@ -125,7 +124,7 @@ export const Room = ({
             }, 5000)
         });
 
-        socket.on("answer", ({sdp: remoteSdp}) => {
+        socket.on("answer", ({ sdp: remoteSdp }) => {
             setLobby(false);
             setSendingPc(pc => {
                 pc?.setRemoteDescription(remoteSdp)
@@ -138,9 +137,9 @@ export const Room = ({
             setLobby(true);
         })
 
-        socket.on("add-ice-candidate", ({candidate, type}) => {
+        socket.on("add-ice-candidate", ({ candidate, type }) => {
             console.log("add ice candidate from remote");
-            console.log({candidate, type})
+            console.log({ candidate, type })
             if (type == "sender") {
                 setReceivingPc(pc => {
                     if (!pc) {
@@ -155,8 +154,6 @@ export const Room = ({
                 setSendingPc(pc => {
                     if (!pc) {
                         console.error("sending pc nout found")
-                    } else {
-                        // console.error(pc.ontrack)
                     }
                     pc?.addIceCandidate(candidate)
                     return pc;
@@ -176,10 +173,47 @@ export const Room = ({
         }
     }, [localVideoRef, localVideoTrack])
 
-    return <div>
-        Hi {name}
-        <video autoPlay width={400} height={400} ref={localVideoRef} />
-        {lobby ? "Waiting to connect you to someone" : null}
-        <video autoPlay width={400} height={400} ref={remoteVideoRef} />
-    </div>
+    return (
+        <div className="container d-flex flex-column align-items-center mt-5">
+            <h2 className="mb-4">Welcome, {name}</h2>
+            <div className="row">
+                <div className="col-12 col-md-6 order-md-1 order-2 mb-4">
+                    <div className="card">
+                        <div className="card-header">
+                            <h5 className="card-title">Your Video</h5>
+                        </div>
+                        <div className="card-body">
+                            <video
+                                autoPlay
+                                width={400}
+                                height={400}
+                                ref={localVideoRef}
+                                className="w-100"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="col-12 col-md-6 order-md-2 order-1 mb-4">
+                    <div className="card">
+                        <div className="card-header">
+                            <h5 className="card-title">Remote Video</h5>
+                        </div>
+                        <div className="card-body">
+                            {lobby ? (
+                                <p className="text-muted">Waiting to connect you to someone...</p>
+                            ) : (
+                                <video
+                                    autoPlay
+                                    width={400}
+                                    height={400}
+                                    ref={remoteVideoRef}
+                                    className="w-100"
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
 }
