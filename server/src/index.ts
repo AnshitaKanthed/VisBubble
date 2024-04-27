@@ -5,25 +5,31 @@ import { Server } from 'socket.io';
 import { UserManager } from "./manager/userManager";
 
 const app = express();
-const server = http.createServer(http);
+const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "*" // allow all origins
+        origin: "*" // Allow all origins
     }
 });
 
-const userManager = new UserManager;
+const userManager = new UserManager();
 
 io.on('connection', (socket: Socket) => {
-    console.log('a user connected');
     userManager.addUser("randomName", socket);
     socket.on("disconnect", () => {
-        console.log("user disconnected");
         userManager.removeUser(socket.id);
-    })
+    });
 });
 
 server.listen(3000, () => {
-    console.log('listening on *:3000');
+    console.log('Listening on *:3000');
+});
+
+server.on('error', (error) => {
+    console.error('Server error:', error);
+});
+
+io.on('error', (error) => {
+    console.error('Socket.IO error:', error);
 });
