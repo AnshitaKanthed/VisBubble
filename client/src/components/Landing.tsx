@@ -43,6 +43,7 @@ export const Landing = () => {
             ></video>
           </div>
           <div className="col-md-4">
+            <h1 className="text-center mb-4">Welcome to VisBubble</h1>
             <div className="mb-3">
               <input
                 type="text"
@@ -59,8 +60,25 @@ export const Landing = () => {
                 setJoined(true);
               }}
             >
-              Join
+              Join Video Call
             </button>
+            <div className="mt-3">
+              <p className="text-muted">
+                Start your video calls with VisBubble. Simply enter your name and click "Join Video Call" to get started.
+              </p>
+              <p className="text-muted">
+                For the best experience, please allow access to your camera and microphone when prompted.
+              </p>
+            </div>
+            <hr />
+            <div className="text-center">
+              <p className="text-muted mb-1">
+                &copy; {new Date().getFullYear()} VisBubble. All rights reserved.
+              </p>
+              <p className="text-muted mb-0">
+                MIT License - See the <a href="https://github.com/adistrim/VisBubble?tab=MIT-1-ov-file" target="_blank">LICENSE</a> file for details.
+              </p>
+            </div>
           </div>
         </div>
       </div>
